@@ -3,61 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Passa ou Repassa — Teste</title>
+  <meta name="theme-color" content="#09010f" />
+  <title>Passa ou Repassa — TEX PUB</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div>
-        <span class="eyebrow">MODO TESTE</span>
-        <h1>PASSA OU REPASSA</h1>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="confetti-layer" id="confettiLayer"></div>
+
+  <main class="app-shell">
+    <header class="hero">
+      <img src="logo.png" alt="TEX PUB" class="logo" />
+      <div class="title-wrap">
+        <div class="kicker">QUIZ NIGHT • MODO TESTE</div>
+        <h1><span>PASSA</span><em>OU</em><strong>REPASSA!</strong></h1>
+        <p>Quem sabe, passa. Quem não sabe, repassa!</p>
       </div>
-      <div class="round-badge">Pergunta <span id="questionNumber">1</span>/10</div>
+      <div class="challenge-card">SÓ VALE<br><b>QUEM TEM</b><br><strong>CORAGEM!</strong></div>
     </header>
 
-    <section class="scoreboard">
-      <article class="team team-a" id="teamA">
-        <div class="team-key">A</div>
-        <div>
-          <p>Equipe Azul</p>
-          <strong id="scoreA">0</strong>
-        </div>
+    <section class="arena">
+      <article class="team-panel blue" id="teamA">
+        <div class="team-title">EQUIPE AZUL</div>
+        <div class="score" id="scoreA">00</div>
+        <div class="points-label">PONTOS</div>
+        <div class="press-key">APERTE <kbd>A</kbd><small>PARA RESPONDER!</small></div>
       </article>
 
-      <div class="timer-wrap">
-        <div class="timer" id="timer">15</div>
-        <span>segundos</span>
-      </div>
-
-      <article class="team team-b" id="teamB">
-        <div>
-          <p>Equipe Vermelha</p>
-          <strong id="scoreB">0</strong>
+      <section class="center-stage">
+        <div class="round-label">RODADA <strong><span id="questionNumber">1</span>/10</strong></div>
+        <div class="timer-ring" id="timerRing">
+          <div class="timer" id="timer">15</div>
+          <span>SEGUNDOS</span>
         </div>
-        <div class="team-key">D</div>
+        <div class="status-banner" id="status">AGUARDANDO RESPOSTA...</div>
+      </section>
+
+      <article class="team-panel red" id="teamB">
+        <div class="team-title">EQUIPE VERMELHA</div>
+        <div class="score" id="scoreB">00</div>
+        <div class="points-label">PONTOS</div>
+        <div class="press-key">APERTE <kbd>D</kbd><small>PARA RESPONDER!</small></div>
       </article>
     </section>
 
-    <section class="game-card">
-      <p class="category" id="category">Conhecimentos Gerais</p>
-      <h2 id="question">Carregando pergunta...</h2>
-      <div class="answers" id="answers"></div>
-      <div class="status" id="status">Pressione A ou D para disputar a resposta.</div>
+    <section class="question-stage">
+      <aside class="how-to card-mini">
+        <h3>COMO JOGAR</h3>
+        <p>🔔 Aperte seu botão</p>
+        <p>✅ Acertou? +10 pontos</p>
+        <p>❌ Errou? Passa a vez</p>
+        <p>⏱️ Sem resposta? Tempo!</p>
+      </aside>
+
+      <section class="question-card">
+        <div class="question-meta"><span id="category">Conhecimentos Gerais</span><b>PERGUNTA <span id="questionBadge">01</span></b></div>
+        <h2 id="question">Carregando pergunta...</h2>
+        <div class="answers" id="answers"></div>
+      </section>
+
+      <aside class="keyboard card-mini">
+        <h3>CONTROLES</h3>
+        <p><kbd>A</kbd> Equipe Azul</p>
+        <p><kbd>D</kbd> Equipe Vermelha</p>
+        <p><kbd>ESPAÇO</kbd> Cronômetro</p>
+        <p><kbd>N</kbd> Próxima</p>
+        <p><kbd>R</kbd> Liberar botões</p>
+      </aside>
     </section>
 
     <section class="controls">
-      <button id="startBtn">Iniciar cronômetro</button>
-      <button id="correctBtn" class="success" disabled>Acertou +10</button>
-      <button id="wrongBtn" class="danger" disabled>Errou</button>
-      <button id="showAnswerBtn">Mostrar resposta</button>
-      <button id="nextBtn">Próxima pergunta</button>
-      <button id="resetBtn" class="ghost">Zerar jogo</button>
+      <button id="correctBtn" class="action correct" disabled>✓ ACERTOU! <span>+10 PONTOS</span></button>
+      <button id="startBtn" class="action pass">⏱ INICIAR / PAUSAR <span>CRONÔMETRO</span></button>
+      <button id="wrongBtn" class="action wrong" disabled>✕ ERROU! <span>PASSA A VEZ</span></button>
+      <button id="showAnswerBtn" class="small-btn">Mostrar resposta</button>
+      <button id="nextBtn" class="small-btn">Próxima pergunta</button>
+      <button id="resetBtn" class="small-btn ghost">Zerar jogo</button>
     </section>
 
-    <section class="help">
-      <strong>Teclado:</strong> A = Equipe Azul · D = Equipe Vermelha · Espaço = iniciar/pausar cronômetro · N = próxima pergunta · R = liberar botões
-    </section>
+    <footer>TEX PUB — <strong>MAIS QUE UM PUB, UMA EXPERIÊNCIA!</strong></footer>
   </main>
 
   <div class="flash" id="flash"></div>
