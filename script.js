@@ -38,12 +38,13 @@ function playSiren(){
   const osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime;
   osc.type='square';
   osc.frequency.setValueAtTime(620,t);
-  for(let i=0;i<7;i++){
+  // Sirene mais longa: aproximadamente 1,6 s (o dobro da versão anterior).
+  for(let i=0;i<15;i++){
     osc.frequency.linearRampToValueAtTime(i%2===0?1080:620,t+.1*(i+1));
   }
   gain.gain.setValueAtTime(.001,t); gain.gain.linearRampToValueAtTime(.19,t+.025);
-  gain.gain.setValueAtTime(.19,t+.62); gain.gain.exponentialRampToValueAtTime(.001,t+.78);
-  osc.connect(gain); gain.connect(ctx.destination); osc.start(t); osc.stop(t+.8)
+  gain.gain.setValueAtTime(.19,t+1.42); gain.gain.exponentialRampToValueAtTime(.001,t+1.58);
+  osc.connect(gain); gain.connect(ctx.destination); osc.start(t); osc.stop(t+1.6)
 }
 function playApplause(){
   const ctx=getAudioCtx(); if(!ctx)return;
