@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Passa ou Repassa — Teste</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">MODO TESTE</span>
+        <h1>PASSA OU REPASSA</h1>
+      </div>
+      <div class="round-badge">Pergunta <span id="questionNumber">1</span>/10</div>
+    </header>
+
+    <section class="scoreboard">
+      <article class="team team-a" id="teamA">
+        <div class="team-key">A</div>
+        <div>
+          <p>Equipe Azul</p>
+          <strong id="scoreA">0</strong>
+        </div>
+      </article>
+
+      <div class="timer-wrap">
+        <div class="timer" id="timer">15</div>
+        <span>segundos</span>
+      </div>
+
+      <article class="team team-b" id="teamB">
+        <div>
+          <p>Equipe Vermelha</p>
+          <strong id="scoreB">0</strong>
+        </div>
+        <div class="team-key">D</div>
+      </article>
+    </section>
+
+    <section class="game-card">
+      <p class="category" id="category">Conhecimentos Gerais</p>
+      <h2 id="question">Carregando pergunta...</h2>
+      <div class="answers" id="answers"></div>
+      <div class="status" id="status">Pressione A ou D para disputar a resposta.</div>
+    </section>
+
+    <section class="controls">
+      <button id="startBtn">Iniciar cronômetro</button>
+      <button id="correctBtn" class="success" disabled>Acertou +10</button>
+      <button id="wrongBtn" class="danger" disabled>Errou</button>
+      <button id="showAnswerBtn">Mostrar resposta</button>
+      <button id="nextBtn">Próxima pergunta</button>
+      <button id="resetBtn" class="ghost">Zerar jogo</button>
+    </section>
+
+    <section class="help">
+      <strong>Teclado:</strong> A = Equipe Azul · D = Equipe Vermelha · Espaço = iniciar/pausar cronômetro · N = próxima pergunta · R = liberar botões
+    </section>
+  </main>
+
+  <div class="flash" id="flash"></div>
+  <script src="script.js"></script>
+</body>
+</html>
