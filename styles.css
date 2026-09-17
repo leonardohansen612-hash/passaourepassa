@@ -6,3 +6,40 @@
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes logoBounce{50%{transform:translateY(-5px) rotate(-1deg)}}@keyframes wobble{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-2deg) scale(1.02)}}@keyframes floatGlow{to{transform:translate(50px,35px) scale(1.15)}}@keyframes sheen{0%{transform:translateX(-80%) rotate(10deg)}100%{transform:translateX(80%) rotate(10deg)}}@keyframes teamPulse{50%{filter:brightness(1.5);box-shadow:0 0 45px currentColor}}@keyframes warningPulse{50%{transform:scale(1.03);box-shadow:0 0 55px #ff4d00}}@keyframes flash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}@keyframes confettiFall{to{transform:translate(var(--dx),110vh) rotate(760deg);opacity:.8}}
 @media(max-width:1100px){.hero{grid-template-columns:180px 1fr}.challenge-card{display:none}.arena{grid-template-columns:1fr 230px 1fr}.timer-ring{width:200px;height:200px}.timer{font-size:80px}.question-stage{grid-template-columns:1fr}.card-mini{display:none}}
 @media(max-width:720px){.app-shell{width:min(100% - 16px,1500px)}.hero{grid-template-columns:100px 1fr;gap:8px;padding-inline:4px}.title-wrap h1 span,.title-wrap h1 strong{font-size:42px}.title-wrap h1 strong{margin-left:6px}.title-wrap h1 em{font-size:16px;padding:7px}.title-wrap p{font-size:10px}.arena{grid-template-columns:1fr 100px 1fr;gap:8px}.team-panel{min-height:190px;padding:14px 8px}.team-title{font-size:18px}.score{font-size:60px}.points-label{font-size:14px}.press-key{font-size:15px;padding:8px}.press-key small{font-size:9px}.timer-ring{width:96px;height:96px;border-width:3px}.timer-ring:after{inset:-7px}.timer{font-size:42px}.timer-ring span{font-size:9px;margin-top:5px}.round-label{font-size:12px}.round-label strong{display:block;margin:3px 0}.status-banner{min-width:95px;padding:6px 8px;font-size:10px}.question-card{padding:20px 14px}.answers{grid-template-columns:1fr}h2{font-size:28px}.action{min-width:calc(50% - 6px);font-size:16px}.logo{max-height:90px}footer{font-size:14px}}
+
+/* Ajuste para TV 55\" / telas Full HD: mantém a pergunta inteira visível sem cortar a parte inferior */
+@media (min-width:1101px) and (max-height:1080px){
+  .app-shell{padding:8px 0 12px}
+  .hero{grid-template-columns:210px 1fr 190px;gap:14px;padding:4px 14px 0}
+  .logo{max-height:125px}
+  .kicker{padding:3px 12px;font-size:10px}
+  .title-wrap h1 span,.title-wrap h1 strong{font-size:clamp(48px,5.3vw,82px)}
+  .title-wrap h1 em{font-size:clamp(18px,2.2vw,30px);padding:9px}
+  .title-wrap p{margin:8px 0 0;font-size:13px}
+  .challenge-card{padding:10px 16px;font-size:21px}
+  .arena{grid-template-columns:1fr 250px 1fr;gap:18px;margin-top:4px}
+  .team-panel{min-height:215px;padding:18px}
+  .team-title{font-size:32px}
+  .score{font-size:96px}
+  .points-label{font-size:18px}
+  .press-key{margin-top:10px;padding:8px 14px;font-size:20px}
+  .press-key small{font-size:10px;margin-top:3px}
+  .round-label{font-size:18px}
+  .timer-ring{width:180px;height:180px;margin:5px auto}
+  .timer{font-size:72px}
+  .timer-ring span{font-size:14px;margin-top:8px}
+  .status-banner{min-width:220px;padding:7px 15px;font-size:15px}
+  .question-stage{grid-template-columns:190px 1fr 190px;gap:14px;margin-top:12px}
+  .card-mini{padding:12px;border-radius:18px}
+  .card-mini h3{margin-bottom:7px;font-size:19px}
+  .card-mini p{font-size:11px;margin:6px 0}
+  .question-card{padding:18px 24px;border-radius:22px}
+  .question-meta{font-size:11px}
+  h2{margin:14px 0 14px;font-size:clamp(25px,2.5vw,40px)}
+  .answers{gap:8px}
+  .answer{padding:9px 12px;font-size:14px}
+  .controls{gap:8px;margin-top:10px}
+  .action{min-width:220px;padding:9px 14px;font-size:18px}
+  .small-btn{padding:7px 11px;font-size:11px}
+  footer{margin-top:8px;font-size:15px}
+}
