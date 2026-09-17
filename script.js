@@ -11,12 +11,12 @@ const questions = [
   { category:'Conhecimentos Gerais', q:'Quantos lados tem um hexágono?', options:['5','6','7','8'], answer:1 }
 ];
 let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false;
-const $=id=>document.getElementById(id), teamA=$('teamA'),teamB=$('teamB'),scoreA=$('scoreA'),scoreB=$('scoreB'),timer=$('timer'),status=$('status'),answers=$('answers'),correctBtn=$('correctBtn'),wrongBtn=$('wrongBtn');
+const $=id=>document.getElementById(id), teamA=$('teamA'),teamB=$('teamB'),scoreA=$('scoreA'),scoreB=$('scoreB'),timer=$('timer'),status=$('status'),answers=$('answers'),passBtn=$('passBtn');
 function pad(n){return String(n).padStart(2,'0')}
-function renderQuestion(){const item=questions[index];$('questionNumber').textContent=index+1;$('questionBadge').textContent=pad(index+1);$('category').textContent=item.category;$('question').textContent=item.q;answers.innerHTML='';item.options.forEach((text,i)=>{const div=document.createElement('div');div.className='answer';div.dataset.index=i;div.textContent=`${String.fromCharCode(65+i)}) ${text}`;answers.appendChild(div)});answerShown=false;resetRound()}
+function renderQuestion(){const item=questions[index];$('questionNumber').textContent=index+1;$('questionBadge').textContent=pad(index+1);$('category').textContent=item.category;$('question').textContent=item.q;answers.innerHTML='';item.options.forEach((text,i)=>{const div=document.createElement('div');div.className='answer';div.dataset.index=i;div.textContent=`${String.fromCharCode(65+i)}) ${text}`;div.addEventListener('click',()=>chooseAnswer(i));answers.appendChild(div)});answerShown=false;resetRound()}
 function updateScores(){scoreA.textContent=pad(scores.A);scoreB.textContent=pad(scores.D)}
-function resetRound(){lockedTeam=null;teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';correctBtn.disabled=true;wrongBtn.disabled=true;timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
-function buzz(team){if(lockedTeam)return;lockedTeam=team;stopTimer();const name=team==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA';(team==='A'?teamA:teamB).classList.add('active');status.textContent=`${name} APERTOU PRIMEIRO!`;correctBtn.disabled=false;wrongBtn.disabled=false;playBuzz(team);flash(team)}
+function resetRound(){lockedTeam=null;teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';passBtn.disabled=true;timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
+function buzz(team){if(lockedTeam)return;lockedTeam=team;stopTimer();const name=team==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA';(team==='A'?teamA:teamB).classList.add('active');status.textContent=`${name} APERTOU PRIMEIRO!`;passBtn.disabled=false;playBuzz(team);flash(team)}
 let audioCtx=null;
 function getAudioCtx(){
   try{
@@ -71,14 +71,47 @@ function playFail(){
 }
 function playBuzz(){playSiren()}
 function flash(team){const el=$('flash');el.className=`flash ${team==='A'?'blue':'red'}`;setTimeout(()=>el.className='flash',260)}
-function startTimer(){if(timerId){stopTimer();status.textContent='CRONÔMETRO PAUSADO';return}if(timeLeft<=0)timeLeft=15;status.textContent=lockedTeam?status.textContent:'VALENDO! APERTE A OU D!';timerId=setInterval(()=>{timeLeft--;timer.textContent=timeLeft;$('timerRing').classList.toggle('warning',timeLeft<=5);if(timeLeft<=0){stopTimer();status.textContent='TEMPO ESGOTADO!';correctBtn.disabled=true;wrongBtn.disabled=true;playTimeout()}},1000)}
+function startTimer(){if(timerId){stopTimer();status.textContent='CRONÔMETRO PAUSADO';return}if(timeLeft<=0)timeLeft=15;status.textContent=lockedTeam?status.textContent:'VALENDO! APERTE A OU D!';timerId=setInterval(()=>{timeLeft--;timer.textContent=timeLeft;$('timerRing').classList.toggle('warning',timeLeft<=5);if(timeLeft<=0){stopTimer();status.textContent='TEMPO ESGOTADO!';passBtn.disabled=true;playTimeout()}},1000)}
 function stopTimer(){if(timerId)clearInterval(timerId);timerId=null}
 function playTimeout(){tone(190,.45,'sawtooth',.13);setTimeout(()=>tone(130,.35,'sawtooth',.11),180)}
-function markCorrect(){if(!lockedTeam)return;scores[lockedTeam]+=10;updateScores();status.textContent=`${lockedTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'} ACERTOU! +10`;correctBtn.disabled=true;wrongBtn.disabled=true;showAnswer();celebrate();playApplause()}
-function markWrong(){if(!lockedTeam)return;status.textContent=`${lockedTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'} ERROU!`;correctBtn.disabled=true;wrongBtn.disabled=true;showAnswer();playFail()}
+function chooseAnswer(selectedIndex) {
+  if (!lockedTeam || answerShown) return;
+  const item = questions[index];
+  const selected = answers.querySelector(`[data-index="${selectedIndex}"]`);
+  answerShown = true;
+  passBtn.disabled = true;
+  stopTimer();
+
+  if (selectedIndex === item.answer) {
+    selected.classList.add('correct');
+    scores[lockedTeam] += 10;
+    updateScores();
+    status.textContent = `${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'} ACERTOU! +10 PONTOS.`;
+    playApplause(); celebrate();
+  } else {
+    if (selected) selected.classList.add('wrong-answer');
+    const correct = answers.querySelector(`[data-index="${item.answer}"]`);
+    if (correct) correct.classList.add('correct');
+    status.textContent = `${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'} ERROU!`;
+    playFail();
+  }
+}
+
+function passTurn() {
+  if (!lockedTeam || answerShown) return;
+  const oldTeam = lockedTeam;
+  lockedTeam = oldTeam === 'A' ? 'D' : 'A';
+  teamA.classList.toggle('active', lockedTeam === 'A');
+  teamB.classList.toggle('active', lockedTeam === 'D');
+  const name = lockedTeam === 'A' ? 'Equipe Azul' : 'Equipe Vermelha';
+  status.textContent = `PASSOU! Agora é a vez da ${name}.`;
+  flash(lockedTeam);
+  playBuzz(lockedTeam);
+}
+
 function showAnswer(){if(answerShown)return;answerShown=true;const item=questions[index],el=answers.querySelector(`[data-index="${item.answer}"]`);if(el)el.classList.add('correct')}
 function nextQuestion(){index=(index+1)%questions.length;renderQuestion()}
 function celebrate(){const layer=$('confettiLayer'),colors=['#ffd600','#ff1bd1','#1677ff','#62ff71','#ff203c','#ffffff'];for(let i=0;i<80;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.setProperty('--dx',`${(Math.random()-.5)*360}px`);c.style.animationDelay=(Math.random()*.25)+'s';c.style.transform=`rotate(${Math.random()*180}deg)`;layer.appendChild(c);setTimeout(()=>c.remove(),2300)}}
-$('startBtn').addEventListener('click',startTimer);correctBtn.addEventListener('click',markCorrect);wrongBtn.addEventListener('click',markWrong);$('showAnswerBtn').addEventListener('click',showAnswer);$('nextBtn').addEventListener('click',nextQuestion);$('resetBtn').addEventListener('click',()=>{scores={A:0,D:0};index=0;updateScores();renderQuestion()});
-document.addEventListener('keydown',e=>{if(e.repeat)return;const key=e.key.toLowerCase();if(key==='a')buzz('A');if(key==='d')buzz('D');if(key==='n')nextQuestion();if(key==='r')resetRound();if(e.code==='Space'){e.preventDefault();startTimer()}});
+$('startBtn').addEventListener('click',startTimer);passBtn.addEventListener('click',passTurn);$('showAnswerBtn').addEventListener('click',showAnswer);$('nextBtn').addEventListener('click',nextQuestion);$('resetBtn').addEventListener('click',()=>{scores={A:0,D:0};index=0;updateScores();renderQuestion()});
+document.addEventListener('keydown',e=>{if(e.repeat)return;const key=e.key.toLowerCase();if(key==='a')buzz('A');if(key==='d')buzz('D');if(key==='n')nextQuestion();if(key==='r')resetRound();if(key==='p')passTurn();if(e.code==='Space'){e.preventDefault();startTimer()}});
 updateScores();renderQuestion();

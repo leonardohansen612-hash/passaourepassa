@@ -43,3 +43,6 @@
   .small-btn{padding:7px 11px;font-size:11px}
   footer{margin-top:8px;font-size:15px}
 }
+
+.answer{cursor:pointer}.answer.wrong-answer{background:rgba(255,65,85,.18);border-color:#ff4155;box-shadow:0 0 20px rgba(255,65,85,.25)}
+.action.timer-action{color:var(--yellow)}
