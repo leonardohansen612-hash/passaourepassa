@@ -59,3 +59,18 @@ body{background-color:#10001c;background-image:linear-gradient(rgba(11,2,23,.78)
 .center-stage{padding-top:.4vh}.round-label{font-size:clamp(15px,1.2vw,23px);color:#fff}.timer-ring{width:min(16vh,150px);min-width:110px;border-width:5px}.timer{font-size:clamp(48px,4.5vw,84px)}.timer-ring span{font-size:clamp(8px,.65vw,12px)}.status-banner{display:none}
 .question-stage{border-top:4px solid #aa24ff;padding-top:.7vh;box-shadow:0 -5px 20px #b000ff55}.question-card{border-color:#c733ff;background:linear-gradient(180deg,#241033f5,#0e0715fa)}
 @media(max-height:800px){.hero{height:19vh;min-height:125px}.title-wrap h1 span,.title-wrap h1 strong{font-size:clamp(43px,4.7vw,84px)}.arena{height:23vh;min-height:155px}.team-title{font-size:clamp(22px,1.9vw,35px)}.score{font-size:clamp(82px,8vw,145px)}.timer-ring{width:min(14vh,125px)}.neon-note{font-size:clamp(12px,1vw,19px)}}
+
+/* V8 FINAL — correções de composição e mascotes da referência */
+.hero{grid-template-columns:minmax(150px,13vw) minmax(0,1fr) minmax(120px,9vw) minmax(150px,13vw);overflow:hidden}
+.mascot-side{height:100%;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;position:relative}
+.mascot-side img{height:100%;width:100%;object-fit:cover;object-position:center;filter:drop-shadow(0 0 15px currentColor)}
+.mascot-blue{color:#1594ff}.mascot-red{color:#ff2446}
+.arena{grid-template-columns:minmax(0,1fr) 210px minmax(0,1fr);gap:1.2vw;padding:0 .8vw}
+.center-stage{min-width:0;width:210px;justify-self:center;position:relative;z-index:5}
+.round-label{width:100%;text-align:center;white-space:nowrap;font-size:clamp(13px,1vw,19px)}
+.team-panel{grid-template-columns:minmax(250px,1fr) minmax(120px,30%);padding-left:3.2vw;padding-right:2.2vw}
+.team-title{font-size:clamp(23px,1.85vw,36px);max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.score{grid-column:2;min-width:0;width:100%;font-size:clamp(82px,7.5vw,145px);justify-self:center}
+.press-key{max-width:230px}
+@media(max-width:1350px){.hero{grid-template-columns:150px minmax(0,1fr) 115px 150px}.arena{grid-template-columns:minmax(0,1fr) 175px minmax(0,1fr)}.center-stage{width:175px}.team-panel{grid-template-columns:minmax(200px,1fr) minmax(105px,28%);padding-left:2.5vw;padding-right:1.5vw}.team-title{font-size:clamp(20px,1.7vw,30px)}.score{font-size:clamp(70px,7vw,120px)}}
+@media(max-height:800px){.mascot-side img{height:110%}.arena{grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr)}.center-stage{width:180px}.team-panel{padding-top:1.1vh;padding-bottom:1vh}.score{font-size:clamp(70px,7.2vw,128px)}}
