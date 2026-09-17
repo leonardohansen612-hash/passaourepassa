@@ -1,15 +1,18 @@
-const questions = [
-  { category:'Geografia', q:'Qual é a capital da Austrália?', options:['Sydney','Melbourne','Canberra','Perth'], answer:2 },
-  { category:'Ciência', q:'Qual planeta é conhecido como Planeta Vermelho?', options:['Vênus','Marte','Júpiter','Mercúrio'], answer:1 },
-  { category:'Brasil', q:'Em qual região brasileira fica o estado do Amazonas?', options:['Norte','Nordeste','Centro-Oeste','Sudeste'], answer:0 },
-  { category:'História', q:'Em que ano o homem pisou na Lua pela primeira vez?', options:['1965','1969','1972','1975'], answer:1 },
-  { category:'Esportes', q:'Quantos jogadores cada time tem em campo no futebol tradicional?', options:['9','10','11','12'], answer:2 },
-  { category:'Entretenimento', q:'Qual personagem vive na cidade fictícia de Gotham?', options:['Superman','Batman','Homem-Aranha','Flash'], answer:1 },
-  { category:'Matemática', q:'Quanto é 12 x 8?', options:['86','92','96','108'], answer:2 },
-  { category:'Natureza', q:'Qual é o maior animal terrestre atualmente?', options:['Rinoceronte','Hipopótamo','Elefante-africano','Girafa'], answer:2 },
-  { category:'Tecnologia', q:'O que significa a sigla USB?', options:['Universal Serial Bus','United System Base','User Signal Bridge','Universal System Board'], answer:0 },
-  { category:'Conhecimentos Gerais', q:'Quantos lados tem um hexágono?', options:['5','6','7','8'], answer:1 }
-];
+const MATCH_SIZE = 10;
+const STORAGE_KEY = 'texPassaRepassaUsedQuestionsV3';
+function loadUsed(){try{return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'))}catch(e){return new Set()}}
+function saveUsed(set){localStorage.setItem(STORAGE_KEY,JSON.stringify([...set]))}
+function shuffled(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function buildMatch(){
+  let used=loadUsed(); let available=QUESTION_BANK.filter(q=>!used.has(q.id));
+  if(available.length<MATCH_SIZE){used=new Set();available=[...QUESTION_BANK]}
+  const byCat={}; shuffled(available).forEach(q=>(byCat[q.category]??=[]).push(q));
+  const cats=shuffled(Object.keys(byCat)); const pick=[];
+  while(pick.length<MATCH_SIZE){let moved=false;for(const c of cats){if(byCat[c].length&&pick.length<MATCH_SIZE){pick.push(byCat[c].pop());moved=true}}if(!moved)break}
+  pick.forEach(q=>used.add(q.id)); saveUsed(used); return pick;
+}
+let questions=buildMatch();
+
 let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false;
 const $=id=>document.getElementById(id), teamA=$('teamA'),teamB=$('teamB'),scoreA=$('scoreA'),scoreB=$('scoreB'),timer=$('timer'),status=$('status'),answers=$('answers'),passBtn=$('passBtn');
 function pad(n){return String(n).padStart(2,'0')}
@@ -110,8 +113,8 @@ function passTurn() {
 }
 
 function showAnswer(){if(answerShown)return;answerShown=true;const item=questions[index],el=answers.querySelector(`[data-index="${item.answer}"]`);if(el)el.classList.add('correct')}
-function nextQuestion(){index=(index+1)%questions.length;renderQuestion()}
+function nextQuestion(){if(index>=questions.length-1){status.textContent='FIM DA PARTIDA! Clique em Zerar jogo para iniciar uma nova com 10 perguntas inéditas.';stopTimer();passBtn.disabled=true;return}index++;renderQuestion()}
 function celebrate(){const layer=$('confettiLayer'),colors=['#ffd600','#ff1bd1','#1677ff','#62ff71','#ff203c','#ffffff'];for(let i=0;i<80;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.setProperty('--dx',`${(Math.random()-.5)*360}px`);c.style.animationDelay=(Math.random()*.25)+'s';c.style.transform=`rotate(${Math.random()*180}deg)`;layer.appendChild(c);setTimeout(()=>c.remove(),2300)}}
-$('startBtn').addEventListener('click',startTimer);passBtn.addEventListener('click',passTurn);$('showAnswerBtn').addEventListener('click',showAnswer);$('nextBtn').addEventListener('click',nextQuestion);$('resetBtn').addEventListener('click',()=>{scores={A:0,D:0};index=0;updateScores();renderQuestion()});
+$('startBtn').addEventListener('click',startTimer);passBtn.addEventListener('click',passTurn);$('showAnswerBtn').addEventListener('click',showAnswer);$('nextBtn').addEventListener('click',nextQuestion);$('resetBtn').addEventListener('click',()=>{scores={A:0,D:0};index=0;questions=buildMatch();updateScores();renderQuestion()});
 document.addEventListener('keydown',e=>{if(e.repeat)return;const key=e.key.toLowerCase();if(key==='a')buzz('A');if(key==='d')buzz('D');if(key==='n')nextQuestion();if(key==='r')resetRound();if(key==='p')passTurn();if(e.code==='Space'){e.preventDefault();startTimer()}});
 updateScores();renderQuestion();
