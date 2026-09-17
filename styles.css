@@ -19,3 +19,25 @@ html,body{background:#060208}body{background:radial-gradient(circle at 50% -12%,
 .controls{height:7.3vh;min-height:52px;gap:.55vw}.action,.small-btn{border:1px solid #74368a;background:#180c1d;border-radius:13px;box-shadow:0 0 10px #7d199d22}.pass{background:linear-gradient(90deg,#5e12a7,#a12dcc,#5e12a7);border:2px solid var(--yellow);color:var(--yellow);text-shadow:0 1px #000;box-shadow:0 0 16px #a900ff55}.timer-action{background:#2a172f;border-color:#b32cdb;color:#fff}.small-btn:hover,.action:hover:not(:disabled){filter:brightness(1.18);transform:translateY(-1px)}footer{color:#c848ff}footer strong{color:#fff}.game-over{background:radial-gradient(circle,#35104bdd,#050208f5)}.game-over-card{background:linear-gradient(180deg,#271035,#0c0711);border:3px solid #c92fff;box-shadow:0 0 50px #b400ff77,0 30px 100px #000}.game-over-kicker{color:var(--yellow)}.game-over h2{text-shadow:0 4px 0 #25032d,0 0 18px #d800ff}.game-over button{background:var(--yellow);box-shadow:0 0 20px #ffd60066}
 @keyframes spinV5{to{transform:rotate(360deg)}}@keyframes sheenV5{0%{transform:translateX(-80%) rotate(10deg)}100%{transform:translateX(80%) rotate(10deg)}}
 @media(max-height:760px){.hero{height:9vh;min-height:58px}.logo{max-height:7vh}.title-wrap h1 span,.title-wrap h1 strong{font-size:clamp(30px,3.7vw,67px)}.arena{height:18vh}.controls{height:6.5vh}.status-banner{padding:.35vh .8vw}.question-card{padding:.8vh 1.3vw}}
+
+/* V6 — placares em formato de palco, inspirados no mockup aprovado */
+.arena{grid-template-columns:minmax(0,1fr) minmax(180px,.42fr) minmax(0,1fr);gap:1.4vw;align-items:center;height:23vh;min-height:155px;padding:0 1vw}
+.team-panel{height:100%;border-radius:0;padding:1.7vh 2.5vw 1.4vh;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr auto;overflow:visible;isolation:isolate}
+.team-panel.blue{clip-path:polygon(4% 0,96% 0,100% 18%,100% 82%,96% 100%,4% 100%,0 82%,0 18%);border:0;background:linear-gradient(110deg,#061d3d 0%,#063875 62%,#08264e 100%);box-shadow:none}
+.team-panel.red{clip-path:polygon(4% 0,96% 0,100% 18%,100% 82%,96% 100%,4% 100%,0 82%,0 18%);border:0;background:linear-gradient(250deg,#3c0710 0%,#850c20 62%,#4a0712 100%);box-shadow:none}
+.team-panel:before{content:"";position:absolute;z-index:-2;inset:0;clip-path:inherit;background:currentColor;filter:drop-shadow(0 0 16px currentColor)}
+.team-panel.blue:before{background:#1594ff}.team-panel.red:before{background:#ff2446}
+.team-panel .team-title,.team-panel .score,.team-panel .points-label,.team-panel .press-key{position:relative;z-index:2}
+.team-panel:after{z-index:-1;inset:4px;clip-path:inherit;background:linear-gradient(110deg,#06172f,#07366d);transform:none;animation:none}
+.team-panel.red:after{background:linear-gradient(250deg,#33070e,#750b1c)}
+.team-title{align-self:start;font-size:clamp(23px,2vw,38px);letter-spacing:.015em;text-shadow:0 3px 0 #000,0 0 10px currentColor;white-space:nowrap}
+.points-label{align-self:start;margin-top:.9vh;font-size:clamp(10px,.75vw,15px);color:#ffffff9c;letter-spacing:.2em}
+.score{grid-row:1/4;grid-column:2;align-self:center;min-width:2.2ch;text-align:center;font-family:Impact,'Arial Black',sans-serif;font-size:clamp(82px,8.5vw,162px);font-weight:900;line-height:.8;letter-spacing:.02em;color:#fff;text-shadow:0 0 7px #fff,0 0 19px currentColor,0 5px 0 #0006}
+.press-key{align-self:end;width:max-content;display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;align-items:center;column-gap:.4em;border:2px solid #ffffffaa;border-radius:13px;padding:.55vh .8vw;background:#08070b88;font-size:clamp(14px,1.1vw,22px);box-shadow:inset 0 0 14px #fff1}
+.press-key kbd{grid-column:2;grid-row:1/3;margin:0;font-size:1.65em;padding:.18em .32em;border-radius:8px;box-shadow:0 3px 0 #999,0 0 14px #fff8}
+.press-key small{grid-column:1;grid-row:2;margin:.2vh 0 0;font-size:.62em;color:#fff;opacity:.72}
+.center-stage{height:100%;justify-content:center;gap:.8vh;overflow:visible}
+.round-label{font-size:clamp(13px,1vw,20px);letter-spacing:.13em}.timer-ring{width:min(13vh,128px);min-width:92px}.status-banner{width:100%;min-width:0;max-width:300px;font-size:clamp(9px,.7vw,14px);white-space:nowrap}
+.team-panel.active{transform:scale(1.025);filter:brightness(1.18) drop-shadow(0 0 18px currentColor)}
+
+@media(max-height:760px){.arena{height:21vh;min-height:140px}.team-panel{padding:1.2vh 2.2vw}.team-title{font-size:clamp(19px,1.7vw,31px)}.score{font-size:clamp(72px,7.3vw,132px)}.press-key{padding:.35vh .65vw}.timer-ring{width:min(12vh,108px)}}
