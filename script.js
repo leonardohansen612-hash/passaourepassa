@@ -13,12 +13,12 @@ function buildMatch(){
 }
 let questions=buildMatch();
 
-let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false,passStage=0;
+let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false,passStage=0,payPending=false;
 const $=id=>document.getElementById(id), teamA=$('teamA'),teamB=$('teamB'),scoreA=$('scoreA'),scoreB=$('scoreB'),timer=$('timer'),status=$('status'),answers=$('answers'),passBtn=$('passBtn');
 function pad(n){return String(n).padStart(2,'0')}
 function renderQuestion(){const item=questions[index];$('questionNumber').textContent=index+1;$('questionBadge').textContent=pad(index+1);$('category').textContent=item.category;$('question').textContent=item.q;answers.innerHTML='';item.options.forEach((text,i)=>{const div=document.createElement('div');div.className='answer';div.dataset.index=i;div.textContent=`${String.fromCharCode(65+i)}) ${text}`;div.addEventListener('click',()=>chooseAnswer(i));answers.appendChild(div)});answerShown=false;resetRound()}
 function updateScores(){scoreA.textContent=pad(scores.A);scoreB.textContent=pad(scores.D)}
-function resetRound(){lockedTeam=null;passStage=0;teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';passBtn.disabled=true;setPassButton();timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
+function resetRound(){lockedTeam=null;passStage=0;payPending=false;closePayModal();teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';passBtn.disabled=true;setPassButton();timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
 function setPassButton(){
   if(passStage===0) passBtn.innerHTML='↔ PASSA <span>VAI PARA A OUTRA EQUIPE</span>';
   else if(passStage===1) passBtn.innerHTML='↩ REPASSA <span>VOLTA PARA A PRIMEIRA EQUIPE</span>';
@@ -125,11 +125,51 @@ function passTurn() {
     return;
   }
 
-  // Depois do repassa, não existe novo passe: é a última chance.
+  // Depois do repassa, abre a decisão final: responder ou pagar um desafio.
   passBtn.disabled = true;
-  status.textContent = `RESPONDE OU PAGA! ${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'}, é a última chance.`;
-  passBtn.innerHTML = '⚡ RESPONDE OU PAGA <span>ÚLTIMA CHANCE</span>';
+  stopTimer();
+  status.textContent = `RESPONDE OU PAGA! ${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'}, escolha agora.`;
+  openPayModal();
   flash(lockedTeam);
+}
+
+function openPayModal(){
+  payPending=true;
+  $('payTitle').textContent='RESPONDE OU PAGA?';
+  $('payText').textContent=`${lockedTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'}: responda a pergunta ou cumpra o desafio.`;
+  $('choiceActions').hidden=false;
+  $('challengeActions').hidden=true;
+  $('payModal').hidden=false;
+}
+function closePayModal(){$('payModal').hidden=true;payPending=false}
+function chooseFinalAnswer(){
+  closePayModal();
+  status.textContent=`${lockedTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'} ESCOLHEU RESPONDER!`;
+  passBtn.disabled=true;
+}
+function choosePay(){
+  $('payTitle').textContent='PAGOU!';
+  $('payText').textContent='A equipe deve cumprir o desafio. Confirme o resultado abaixo.';
+  $('choiceActions').hidden=true;
+  $('challengeActions').hidden=false;
+  status.textContent=`${lockedTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'} ESCOLHEU PAGAR! CUMPRA O DESAFIO.`;
+}
+function resolveChallenge(completed){
+  if(!payPending || !lockedTeam)return;
+  const payingTeam=lockedTeam;
+  const otherTeam=payingTeam==='A'?'D':'A';
+  closePayModal();
+  answerShown=true;
+  passBtn.disabled=true;
+  stopTimer();
+  if(completed){
+    status.textContent=`${payingTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'} CUMPRIU O DESAFIO! NINGUÉM PONTUA.`;
+    playApplause();
+  }else{
+    scores[otherTeam]+=10; updateScores();
+    status.textContent=`NÃO CUMPRIU! +10 PONTOS PARA A ${otherTeam==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA'}.`;
+    playFail();
+  }
 }
 
 function showAnswer(){if(answerShown)return;answerShown=true;const item=questions[index],el=answers.querySelector(`[data-index="${item.answer}"]`);if(el)el.classList.add('correct')}
@@ -137,6 +177,7 @@ function showGameOver(){stopTimer();passBtn.disabled=true;const over=$('gameOver
 function newMatch(){scores={A:0,D:0};index=0;questions=buildMatch();updateScores();$('gameOver').hidden=true;renderQuestion()}
 function nextQuestion(){if(index>=questions.length-1){showGameOver();return}index++;renderQuestion()}
 function celebrate(){const layer=$('confettiLayer'),colors=['#ffd600','#ff1bd1','#1677ff','#62ff71','#ff203c','#ffffff'];for(let i=0;i<80;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.setProperty('--dx',`${(Math.random()-.5)*360}px`);c.style.animationDelay=(Math.random()*.25)+'s';c.style.transform=`rotate(${Math.random()*180}deg)`;layer.appendChild(c);setTimeout(()=>c.remove(),2300)}}
+$('chooseAnswerBtn').addEventListener('click',chooseFinalAnswer);$('choosePayBtn').addEventListener('click',choosePay);$('challengeDoneBtn').addEventListener('click',()=>resolveChallenge(true));$('challengeFailBtn').addEventListener('click',()=>resolveChallenge(false));
 $('startBtn').addEventListener('click',startTimer);passBtn.addEventListener('click',passTurn);$('showAnswerBtn').addEventListener('click',showAnswer);$('nextBtn').addEventListener('click',nextQuestion);$('resetBtn').addEventListener('click',newMatch);$('newMatchBtn').addEventListener('click',newMatch);
 document.addEventListener('keydown',e=>{if(e.repeat)return;const key=e.key.toLowerCase();if(key==='a')buzz('A');if(key==='d')buzz('D');if(key==='n')nextQuestion();if(key==='r')resetRound();if(key==='p')passTurn();if(e.code==='Space'){e.preventDefault();startTimer()}});
 updateScores();renderQuestion();

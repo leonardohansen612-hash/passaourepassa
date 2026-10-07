@@ -56,6 +56,7 @@
         <p>✅ Acertou? +10 pontos</p>
         <p>❌ Errou? +10 pontos para o adversário</p>
         <p>↔ Sem resposta? Passa → Repassa → Responde ou Paga</p>
+        <p>⚡ Pagou? Cumpriu = sem ponto • Falhou = +10 adversário</p>
       </aside>
 
       <section class="question-card">
@@ -86,6 +87,22 @@
   </main>
 
   <div class="game-over" id="gameOver" hidden><div class="game-over-card"><div class="game-over-kicker">FIM DE JOGO</div><h2 id="winnerTitle">PARTIDA ENCERRADA!</h2><div class="final-score"><span id="finalA">00</span><b>×</b><span id="finalB">00</span></div><p id="winnerText"></p><button id="newMatchBtn">NOVA PARTIDA</button></div></div>
+
+  <div class="pay-modal" id="payModal" hidden>
+    <div class="pay-card">
+      <div class="pay-kicker">ÚLTIMA CHANCE</div>
+      <h2 id="payTitle">RESPONDE OU PAGA?</h2>
+      <p id="payText">Escolha: responder a pergunta ou cumprir o desafio.</p>
+      <div class="pay-actions" id="choiceActions">
+        <button id="chooseAnswerBtn" class="pay-answer">RESPONDE</button>
+        <button id="choosePayBtn" class="pay-challenge">PAGA</button>
+      </div>
+      <div class="pay-actions" id="challengeActions" hidden>
+        <button id="challengeDoneBtn" class="pay-done">✓ CUMPRIU O DESAFIO</button>
+        <button id="challengeFailBtn" class="pay-fail">✕ NÃO CUMPRIU</button>
+      </div>
+    </div>
+  </div>
   <div class="flash" id="flash"></div>
   <script src="questions.js"></script>
   <script src="script.js"></script>
