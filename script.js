@@ -13,12 +13,17 @@ function buildMatch(){
 }
 let questions=buildMatch();
 
-let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false;
+let index=0,scores={A:0,D:0},lockedTeam=null,timeLeft=15,timerId=null,answerShown=false,passStage=0;
 const $=id=>document.getElementById(id), teamA=$('teamA'),teamB=$('teamB'),scoreA=$('scoreA'),scoreB=$('scoreB'),timer=$('timer'),status=$('status'),answers=$('answers'),passBtn=$('passBtn');
 function pad(n){return String(n).padStart(2,'0')}
 function renderQuestion(){const item=questions[index];$('questionNumber').textContent=index+1;$('questionBadge').textContent=pad(index+1);$('category').textContent=item.category;$('question').textContent=item.q;answers.innerHTML='';item.options.forEach((text,i)=>{const div=document.createElement('div');div.className='answer';div.dataset.index=i;div.textContent=`${String.fromCharCode(65+i)}) ${text}`;div.addEventListener('click',()=>chooseAnswer(i));answers.appendChild(div)});answerShown=false;resetRound()}
 function updateScores(){scoreA.textContent=pad(scores.A);scoreB.textContent=pad(scores.D)}
-function resetRound(){lockedTeam=null;teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';passBtn.disabled=true;timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
+function resetRound(){lockedTeam=null;passStage=0;teamA.classList.remove('active');teamB.classList.remove('active');status.textContent='AGUARDANDO RESPOSTA...';passBtn.disabled=true;setPassButton();timeLeft=15;timer.textContent=timeLeft;$('timerRing').classList.remove('warning');stopTimer()}
+function setPassButton(){
+  if(passStage===0) passBtn.innerHTML='↔ PASSA <span>VAI PARA A OUTRA EQUIPE</span>';
+  else if(passStage===1) passBtn.innerHTML='↩ REPASSA <span>VOLTA PARA A PRIMEIRA EQUIPE</span>';
+  else passBtn.innerHTML='⚡ RESPONDE OU PAGA <span>ÚLTIMA CHANCE</span>';
+}
 function buzz(team){if(lockedTeam)return;lockedTeam=team;stopTimer();const name=team==='A'?'EQUIPE AZUL':'EQUIPE VERMELHA';(team==='A'?teamA:teamB).classList.add('active');status.textContent=`${name} APERTOU PRIMEIRO!`;passBtn.disabled=false;playBuzz(team);flash(team)}
 let audioCtx=null;
 function getAudioCtx(){
@@ -95,21 +100,36 @@ function chooseAnswer(selectedIndex) {
     if (selected) selected.classList.add('wrong-answer');
     const correct = answers.querySelector(`[data-index="${item.answer}"]`);
     if (correct) correct.classList.add('correct');
-    status.textContent = `${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'} ERROU!`;
+    const otherTeam = lockedTeam === 'A' ? 'D' : 'A';
+    scores[otherTeam] += 10;
+    updateScores();
+    status.textContent = `${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'} ERROU! +10 PONTOS PARA A ${otherTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'}.`;
     playFail();
   }
 }
 
 function passTurn() {
   if (!lockedTeam || answerShown) return;
-  const oldTeam = lockedTeam;
-  lockedTeam = oldTeam === 'A' ? 'D' : 'A';
-  teamA.classList.toggle('active', lockedTeam === 'A');
-  teamB.classList.toggle('active', lockedTeam === 'D');
-  const name = lockedTeam === 'A' ? 'Equipe Azul' : 'Equipe Vermelha';
-  status.textContent = `PASSOU! Agora é a vez da ${name}.`;
+
+  if (passStage < 2) {
+    const action = passStage === 0 ? 'PASSOU' : 'REPASSOU';
+    lockedTeam = lockedTeam === 'A' ? 'D' : 'A';
+    passStage++;
+    teamA.classList.toggle('active', lockedTeam === 'A');
+    teamB.classList.toggle('active', lockedTeam === 'D');
+    const name = lockedTeam === 'A' ? 'Equipe Azul' : 'Equipe Vermelha';
+    status.textContent = `${action}! Agora é a vez da ${name}.`;
+    setPassButton();
+    flash(lockedTeam);
+    playBuzz(lockedTeam);
+    return;
+  }
+
+  // Depois do repassa, não existe novo passe: é a última chance.
+  passBtn.disabled = true;
+  status.textContent = `RESPONDE OU PAGA! ${lockedTeam === 'A' ? 'EQUIPE AZUL' : 'EQUIPE VERMELHA'}, é a última chance.`;
+  passBtn.innerHTML = '⚡ RESPONDE OU PAGA <span>ÚLTIMA CHANCE</span>';
   flash(lockedTeam);
-  playBuzz(lockedTeam);
 }
 
 function showAnswer(){if(answerShown)return;answerShown=true;const item=questions[index],el=answers.querySelector(`[data-index="${item.answer}"]`);if(el)el.classList.add('correct')}
